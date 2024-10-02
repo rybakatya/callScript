@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+</head>
+<body>
+    
+    <label  style="word-wrap:break-word">
+        <input id="memberID"  type="checkbox"/>Member ID
+        <input id="callerName"  type="checkbox"/>Caller Name
+        <input id = "memberDOB" type="checkbox"/>Member D.O.B
+        <input id = "callbackNumber" type = "checkbox"/>Callback Number
+    </label>
+    
+
+    <p>
+        <input type="checkbox">
+        Has your address, phone number or email changed?
+       
+    </p>
+
+    <p>
+        <input type="checkbox">
+        Verify plan effective date, plan end date, plan name, and PCP/Medical group name
+
+    </p>
+
+    <p>
+        <input type="checkbox">
+        Is this your first time calling about this issue?
+       
+    </p>
+
+    <p>
+        <input type="checkbox">
+        Do you have time to complete a quick healthy benefit reminder survey? (Gaps in coverage)
+        
+    </p>
+    <label type="text">State:</label>
+    <select id="memberState", onchange="onStateSelected()">
+	
+	</select> 
+    <p id="medicalRadioBoxes"></p>
+	
+	</p>
+    <p>
+        <label>Call Reason: - today you called us to...</label><br>
+        <textarea id="reason" rows="4" cols="50"> </textarea><br>
+
+        <label>Call Action:</label><br>
+        <textarea id="action" rows="4" cols="50"> </textarea><br>
+
+        <label>Call Resolution: - and I've...</label><br>
+        <textarea id="resolution" rows="4" cols="50"> </textarea><br>
+    </p>
+
+    <p>
+        <input type="text" id="search" name="search">
+        <button type="button" onclick="openResearchLinks()">Search Central Point</button>
+    </p>
+    <p>
+        <button type="button" onclick="genSummary()">Generate Summary</button>
+        <button type="button" onclick="copyRAR()">Copy RAR</button>  
+    </p>
+
+    <p id="summaryOne"></p>
+    <p id="summaryFinal"></p>
+    <p id="placeHolder"></p>
+</body>
+</html> 
+
+
+<script>
+    var select = document.getElementById("memberState"); 
+    var options = [
+        ["Select a state", "", ""],
+        ["Alabama", "Wellcare By Allwell", "https://wellcarecomplete.com/"], 
+        ["Arizona", "Wellcare By Allwell", "https://wellcare.azcompletehealth.com/"],
+        ["Arkansas", "Wellcare By Allwell", "https://wellcare.arhealthwellness.com/"],  
+        ["California", "Wellcare By Health Net", "https://wellcare.healthnetcalifornia.com/"], 
+        ["Deleware", "Wellcare", "https://www.wellcare.com/de"], 
+        ["Florida", "Wellcare by Allwell", "https://wellcarecomplete.com/"], 
+        ["Illinois", "Wellcare By Allwell?", "https://wellcarecomplete.com/"],
+        ["Indiana", "Wellcare By Allwell", "https://wellcare.mhsindiana.com/"], 
+        ["Kansas", "Wellcare By Allwell", "https://wellcare.sunflowerhealthplan.com/"],
+        ["Michigan", "Wellcare By Allwell", "https://www.wellcarecomplete.com/"],
+        ["Missouri", "Wellcare By Allwell", "https://wellcare.homestatehealth.com/"],
+        ["Nebraska", "Wellcare", "https://www.wellcarene.com/"],
+        ["Nevada", "Wellcare By Allwell", "https://wellcare.silversummithealthplan.com/"],
+        ["New Mexico", "Wellcare By Allwell", "https://wellcare.westernskycommunitycare.com/"],
+        ["Ohio", "Wellcare By Allwell", "https://wellcare.buckeyehealthplan.com/"],
+        ["Oklahoma", "Wellcare", "https://www.wellcareok.com/"], 
+        ["Oregon", "Wellcare By Health Net", "https://wellcare.healthnetoregon.com/"],
+        ["Pennsylvania", "Wellcare By Allwell", "https://wellcare.pahealthwellness.com/"],
+        ["Texas", "Wellcare by Allwell", "https://wellcare.superiorhealthplan.com/"],
+        ["Washington", "Wellcare By Health Net", "https://wellcare.healthnetoregon.com/"],
+        ["Wisconsin", "Wellcare By Allwell", "https://wellcare.mhswi.com/"] 
+    ]; 
+    
+    for(var i = 0; i < options.length; i++) 
+    {
+        var opt = options[i][0];   
+        var el = document.createElement("option");
+        el.text = opt;
+        el.value = opt;
+    
+        select.add(el);
+    }
+
+function onStateSelected()
+{
+    var state = document.getElementById('memberState').value;
+	var root = document.getElementById('medicalRadioBoxes');
+	root.innerHTML = '';
+	if(state == 'California')
+	{
+		var radio = document.createElement('input');
+		radio.type = 'checkbox';
+		radio.name = 'egwp';
+		radio.value = 'egwp'
+		radio.id = 'egwp';
+				
+		root.appendChild(radio);
+				
+		radio.addEventListener("change", function(){
+			if(this.checked)
+			{
+				if(document.getElementById('dnsp').checked == true)
+					document.getElementById('dnsp').checked = false;
+			}		
+		});
+		
+		var label = document.createElement('label');
+		label.for ="egwp";
+		label.innerHTML = 'Group name begins with SP?';
+		root.appendChild(label);
+				
+		radio = document.createElement('input');
+		radio.type = 'checkbox';
+		radio.name = 'dnsp';
+		radio.value = 'dnsp'
+		radio.id = 'dnsp';	
+		root.appendChild(radio);
+		radio.addEventListener("change", function(){
+			if(this.checked)
+			{
+				if(document.getElementById('egwp').checked == true)
+					document.getElementById('egwp').checked = false;
+			}		
+		});
+				
+		label = document.createElement('label');
+		label.for ="dnsp";
+		label.innerHTML = 'Group name is Wellcare dual align?';
+		root.appendChild(label);
+	}
+	else if(state == 'Oregon')
+	{
+		var radio = document.createElement('input');
+		radio.type = 'checkbox';
+		radio.name = 'trillium';
+		radio.value = 'trillium'
+		radio.id = 'trillium';
+		
+		var root = document.getElementById('medicalRadioBoxes');
+		root.appendChild(radio);
+		
+		var label = document.createElement('label');
+		label.for ="trillium";
+		label.innerHTML = 'Group name is trillium?';
+
+		root.appendChild(label);
+	}
+
+}
+
+function copyRAR()
+{
+	var reason = document.getElementById("reason").value;
+	var action = document.getElementById("action").value;
+	var resolution = document.getElementById("resolution").value;
+	var text = document.getElementById("placeHolder").value;
+	text = "Reason: "  + reason  + "\r\nAction: " + action + "\r\nResolution: " + resolution +"\r\nCaller understood and had no further questions";
+  
+  
+	navigator.clipboard.writeText(text);
+    
+}
+
+function openResearchLinks()
+{
+
+	var text = document.getElementById("search").value;
+	var lines = text.split('\n');
+	
+	lines.forEach((callReason) => 
+	{
+		var win = window.open('https://cenpointprd.ad.wellcare.com/search?search=' + callReason, ' Site Search | Wellcare', 'popup=1');
+        win.focus();
+		win.location.reload();
+	});
+}
+
+function genSummary()
+{
+
+	
+  
+  	var idx = select.selectedIndex;
+  	var reason = document.getElementById("reason").value;
+  	var action = document.getElementById("action").value;
+  	var resolution = document.getElementById("resolution").value;
+  
+	if(idx == 0)
+		alert("You must select a state!");
+  
+  	if(reason.length == 0)
+  		alert("You must insert a call reason");
+  
+  	if(reason.length == 0)
+    	alert("You must insert a call action");
+  	if(resolution == 0)
+  		alert("You must insert a call resolution");
+  
+  	else
+  	{
+    
+    	var text = "Just to summarize what we did today you called us to " + 
+    	reason + " and I've " + resolution + ". In the future you may " +
+    	"also visit our Self Service options, at our website " + options[idx][2] + 
+		" there you can can print new ID cards incase they're lost, view providers" +
+		"and specialists covered by your plan, and view your current claims and authorizations" +
+		" Aside from this is there anything else I can assist you with today before we end this call?";
+	
+		var brand = options[idx][1];
+		var state = document.getElementById('memberState').value;
+		if(state == 'California')
+		{
+			if(document.getElementById('egwp').checked == true)
+				brand = "Health Net of California";
+			
+			if(document.getElementById('dnsp').checked == true)
+				brand = "Wellcare CalViva Health";
+		}
+	
+		if(state == 'Oregon')
+		{
+			if(document.getElementById('trillium').checked == true)
+				brand = "Wellcare By Trillium Advantage";
+		}
+	
+	
+  		var final = " I have a reference number here for your records, if you'd like to take note of it _________." +
+        "Please remain on the line for a brief survey on how I have assisted you today. Just a reminder, on" +
+        "the first question 5 is very satisfied, and 1 is dissatisfied. Thank you for calling " + brand + 
+        ". Have a great day!";
+  
+  	}
+  	document.getElementById("summaryOne").textContent = text;
+	document.getElementById("summaryFinal").textContent = final;
+
+}
+</script>
+
+<style>
+* 
+{
+    color: #ffffff;
+    background-color: #1f1d1d;
+}
+
+input[type="text"], textarea, button {
+
+background-color : #383838; 
+
+}
+</style>
