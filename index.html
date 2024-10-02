@@ -12,8 +12,17 @@
         <input id = "memberDOB" type="checkbox"/>Member D.O.B
         <input id = "callbackNumber" type = "checkbox"/>Callback Number
     </label>
-    
-
+    <p>
+        <label type="text">Caller is a :</label>
+        <select id="relationship", onchange="onRelationshipChanged()">
+            <option>Member</option>
+            <option>Broker</option>
+            <option>Third Party</option>
+        </select>
+    </p>
+    <p id="verificationImageRoot">
+        
+    </p>
     <p>
         <input type="checkbox">
         Has your address, phone number or email changed?
@@ -37,6 +46,8 @@
         Do you have time to complete a quick healthy benefit reminder survey? (Gaps in coverage)
         
     </p>
+
+
     <label type="text">State:</label>
     <select id="memberState", onchange="onStateSelected()"></select>
 
@@ -149,6 +160,12 @@ function getURL(idx)
     }
     return url
 }
+
+function onRelationshipChanged()
+{
+
+}
+
 function createLink()
 {
     var siteRoot = document.getElementById('website');
