@@ -38,9 +38,10 @@
         
     </p>
     <label type="text">State:</label>
-    <select id="memberState", onchange="onStateSelected()">
-	
-	</select> 
+    <select id="memberState", onchange="onStateSelected()"></select>
+
+    <p id="website"></p>
+
     <p id="medicalRadioBoxes"></p>
 	
 	</p>
@@ -78,7 +79,7 @@
         ["Alabama", "Wellcare By Allwell", "https://wellcarecomplete.com/"], 
         ["Arizona", "Wellcare By Allwell", "https://wellcare.azcompletehealth.com/"],
         ["Arkansas", "Wellcare By Allwell", "https://wellcare.arhealthwellness.com/"],  
-        ["California", "Wellcare By Health Net", "https://wellcare.healthnetcalifornia.com/"], 
+        ["California", "Wellcare By Health Net", "https://wellcare.healthnetcalifornia.com/", "www.Healthnet.com", "https://wellcare.healthnetoregon.com/"], 
         ["Deleware", "Wellcare", "https://www.wellcare.com/de"], 
         ["Florida", "Wellcare by Allwell", "https://wellcarecomplete.com/"], 
         ["Illinois", "Wellcare By Allwell?", "https://wellcarecomplete.com/"],
@@ -91,7 +92,7 @@
         ["New Mexico", "Wellcare By Allwell", "https://wellcare.westernskycommunitycare.com/"],
         ["Ohio", "Wellcare By Allwell", "https://wellcare.buckeyehealthplan.com/"],
         ["Oklahoma", "Wellcare", "https://www.wellcareok.com/"], 
-        ["Oregon", "Wellcare By Health Net", "https://wellcare.healthnetoregon.com/"],
+        ["Oregon", "Wellcare By Health Net", "https://wellcare.healthnetoregon.com/", "https://wellcare.trilliumadvantage.com/"],
         ["Pennsylvania", "Wellcare By Allwell", "https://wellcare.pahealthwellness.com/"],
         ["Texas", "Wellcare by Allwell", "https://wellcare.superiorhealthplan.com/"],
         ["Washington", "Wellcare By Health Net", "https://wellcare.healthnetoregon.com/"],
@@ -109,13 +110,72 @@
     }
 
     alert('Important, always say yes when asked if you can help with something to avoid failed CMS test calls');
+
+
+function getURL(idx)
+{
+    var url = options[idx][2];
+
+
+    
+
+    if(options[idx][0] == "California")
+    {
+        var egwp = document.getElementById('egwp');
+        if(egwp != null)
+        {
+            if(egwp.checked == true)
+                url = options[idx][3];
+        }	
+        var dnsp = document.getElementById('dnsp');
+
+        if(dnsp != null)
+        {
+            if(document.getElementById('dnsp').checked == true)
+                url = options[idx][4];
+        }
+    }
+
+    if(options[idx][0] == "Oregon")
+    {
+        var trill = document.getElementById('trillium');
+        if(trill != null)
+        {
+            if(trill.checked == true)
+            {
+                url = options[idx][3];
+            }
+        }
+    }
+    return url
+}
+function createLink()
+{
+    var siteRoot = document.getElementById('website');
+    siteRoot.replaceChildren();
+    var idx = select.selectedIndex;
+
+    var url = getURL(idx);
+
+    var link = document.createElement("a");
+    link.href = url; // Set the URL
+    link.target = "_blank";
+    link.textContent = url; // Set the link text
+    siteRoot.appendChild(link);
+}
+
 function onStateSelected()
 {
+
+    
+    
+    createLink();
     var state = document.getElementById('memberState').value;
 	var root = document.getElementById('medicalRadioBoxes');
 	root.innerHTML = '';
 	if(state == 'California')
 	{
+        
 		var radio = document.createElement('input');
 		radio.type = 'checkbox';
 		radio.name = 'egwp';
@@ -127,9 +187,11 @@ function onStateSelected()
 		radio.addEventListener("change", function(){
 			if(this.checked)
 			{
+                
 				if(document.getElementById('dnsp').checked == true)
 					document.getElementById('dnsp').checked = false;
-			}		
+			}
+            createLink();		
 		});
 		
 		var label = document.createElement('label');
@@ -146,15 +208,18 @@ function onStateSelected()
 		radio.addEventListener("change", function(){
 			if(this.checked)
 			{
+                
 				if(document.getElementById('egwp').checked == true)
 					document.getElementById('egwp').checked = false;
 			}		
+            createLink();
 		});
 				
 		label = document.createElement('label');
 		label.for ="dnsp";
 		label.innerHTML = 'Group name is Wellcare dual align?';
 		root.appendChild(label);
+        
 	}
 	else if(state == 'Oregon')
 	{
@@ -163,7 +228,9 @@ function onStateSelected()
 		radio.name = 'trillium';
 		radio.value = 'trillium'
 		radio.id = 'trillium';
-		
+		radio.addEventListener("change", function(){
+			createLink();
+		});
 		var root = document.getElementById('medicalRadioBoxes');
 		root.appendChild(radio);
 		
@@ -172,6 +239,7 @@ function onStateSelected()
 		label.innerHTML = 'Group name is trillium?';
 
 		root.appendChild(label);
+        createLink();
 	}
 
 }
@@ -226,10 +294,13 @@ function genSummary()
   
   	else
   	{
-    
+
+
+        var url = getURL(idx);
+        url = "<a href='" + url + "' target='_blank'>" + url + "</a>";
     	var text = "Just to summarize what we did today you called us to " + 
     	reason + " and I've " + resolution + ". In the future you may " +
-    	"also visit our Self Service options, at our website " + options[idx][2] + 
+    	"also visit our Self Service options, at our website " + url + 
 		" there you can can print new ID cards incase they're lost, view providers" +
 		"and specialists covered by your plan, and view your current claims and authorizations" +
 		" Aside from this is there anything else I can assist you with today before we end this call?";
@@ -258,7 +329,7 @@ function genSummary()
         ". Have a great day!";
   
   	}
-  	document.getElementById("summaryOne").textContent = text;
+  	document.getElementById("summaryOne").innerHTML = text;
 	document.getElementById("summaryFinal").textContent = final;
 
 }
@@ -269,6 +340,10 @@ function genSummary()
 {
     color: #ffffff;
     background-color: #1f1d1d;
+}
+
+a{
+    color:blue;
 }
 
 input[type="text"], textarea, button {
