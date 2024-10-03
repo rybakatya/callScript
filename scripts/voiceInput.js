@@ -138,11 +138,14 @@ recognition.onresult = (event) => {
 
 
 recognition.onend = () => {
-    var element = finalOutput.parentElement;
-    var n = element.cloneNode(false);
-    n.textContent = finalOutput.textContent.slice();
-    n.textContent += " ";
-    element.prepend(n);
+    if(finalOutput.textContent.length > 0)
+    {
+        var element = finalOutput.parentElement;
+        var n = element.cloneNode(false);
+        n.textContent = finalOutput.textContent.slice();
+        n.textContent += " ";
+        element.prepend(n);
+    }
     finalOutput.textContent = "";
     finalTranscript = "";
     started = false;
