@@ -25,27 +25,40 @@
 
     </p>
 
+    <p>
+        <input id="hippaVerified" type="checkbox">
+        Has hippa been verified for who you're speaking with?
+    </p>
+
+    <p id ="verbalAuthInput">
+        <input id= "verbalAuthorization", type="checkbox">
+        Was verbal auth obtained during this call?
+    </p>
+    <p id="verbalAuthorized">
+        <label type="text">Authorized Party</label>
+        <input id="personAuthed", = "text">
+    </p>
 
     <p>
-        <input type="checkbox">
+        <input id="accChanged" type="checkbox">
         Has your address, phone number or email changed?
        
     </p>
 
     <p>
-        <input type="checkbox">
+        <input id="verifiedPlanInfo" type="checkbox">
         Verify plan effective date, plan end date, plan name, and PCP/Medical group name
 
     </p>
 
     <p>
-        <input type="checkbox">
+        <input id="firstCall" type="checkbox">
         Is this your first time calling about this issue?
        
     </p>
 
     <p>
-        <input type="checkbox">
+        <input id="benefitSurvey" type="checkbox">
         Do you have time to complete a quick healthy benefit reminder survey? (Gaps in coverage)
         
     </p>
@@ -101,7 +114,7 @@
     </p>
     <p>
         <button type="button" onclick="genSummary()">Generate Summary</button>
-        <button type="button" onclick="copyRAR()">Copy RAR</button>  
+        <button type="button" onclick="copyRAR()">Copy Notes</button>  
     </p>
 
     <p id="summaryOne"></p>
@@ -121,12 +134,16 @@
         color:lightskyblue;
     }
     
-    input[type="text"], textarea, button {
+    input, textarea, button {
     
     background-color : #383838; 
     
     }
     
+    #verbalAuthorization
+    {
+        color: #383838;
+    }
     #reason, #action, #resolution
     {
         width: 400px;
@@ -145,6 +162,8 @@
 
 <script>
     var select = document.getElementById("memberState"); 
+    document.getElementById("verbalAuthorized").hidden = true;
+    document.getElementById("verbalAuthInput").hidden = true;
     var options = [
         ["Select a state", "", ""],
         ["Alabama", "Wellcare By Allwell", "https://wellcarecomplete.com/"], 
@@ -153,7 +172,7 @@
         ["California", "Wellcare By Health Net", "https://wellcare.healthnetcalifornia.com/", "www.Healthnet.com", "https://wellcare.healthnetcalifornia.com/ "], 
         ["Deleware", "Wellcare", "https://www.wellcare.com/de"], 
         ["Florida", "Wellcare by Allwell", "https://wellcarecomplete.com/"], 
-        ["Illinois", "Wellcare By Allwell?", "https://wellcarecomplete.com/"],
+        ["Illinois", "Wellcare By Allwell", "https://wellcarecomplete.com/"],
         ["Indiana", "Wellcare By Allwell", "https://wellcare.mhsindiana.com/"], 
         ["Kansas", "Wellcare By Allwell", "https://wellcare.sunflowerhealthplan.com/"],
         ["Michigan", "Wellcare By Allwell", "https://www.wellcarecomplete.com/"],
@@ -222,9 +241,18 @@ function getURL(idx)
     }
     return url
 }
-
+verbalAuthorization.addEventListener("change", function() {
+  if (this.checked) {
+    
+    document.getElementById("verbalAuthorized").hidden = false;
+  } else {
+    
+    document.getElementById("verbalAuthorized").hidden = true;
+  }
+});
 function onRelationshipChanged()
 {
+    
     var root = document.getElementById("verificationImageRoot");
     root.replaceChildren();
     var dropdown = document.getElementById("relationship");
@@ -239,6 +267,12 @@ function onRelationshipChanged()
     if(dropdown.selectedIndex == 2)//friend or family
         link.href = "https://raw.githubusercontent.com/rybakatya/callScript/refs/heads/main/images/verification%20flow/third_party.png"
 
+    if(dropdown.selectedIndex != 0)
+    {   
+        document.getElementById("verbalAuthInput").hidden = false;
+    }
+    if(dropdown.selectedIndex == 0)
+        document.getElementById("verbalAuthInput").hidden = true;
     link.target = "_blank";
     link.textContent = "View hippa verification call flow for current caller type"  
     root.appendChild(link);
@@ -345,7 +379,52 @@ function copyRAR()
 	var action = document.getElementById("action").textContent;
 	var resolution = document.getElementById("resolution").textContent;
 	var text = document.getElementById("placeHolder").value;
-	text = "Reason: "  + reason  + "\r\nAction: " + action + "\r\nResolution: " + resolution +"\r\nCaller understood and had no further questions";
+    text = '';
+
+    if(document.getElementById("memberID").checked == true)
+        text += "MemberID: \r\n";
+
+    if(document.getElementById('callerName').checked == true)
+        text += "Caller Name: \r\n";
+
+    if(document.getElementById('memberDOB').checked == true)
+        text += "Member DOB: \r\n";
+
+    if(document.getElementById('callbackNumber').checked == true)
+        text += "Callback Number: \r\n";
+
+    var relationShip = document.getElementById('relationship');
+    text += "Caller Type: " + relationShip.value +"\r\n";
+
+    if(relationShip.selectedIndex != 0)
+    {
+        var obtainedVerbal = document.getElementById("verbalAuthorization");
+        
+        if(obtainedVerbal.checked == true)
+        {
+            text += "Obtained verbal authorization for " + document.getElementById("personAuthed").textContent + "\r\n";
+        }
+    }
+    if(document.getElementById('hippaVerified').checked == true)
+        text += "Hippa was verified for member \r\n";
+    if(document.getElementById('accChanged').checked == true)
+        text += "Asked member if any account information has changed.\r\n";
+
+    if(document.getElementById("verifiedPlanInfo"))
+        text += "Verified members plan information.\r\n";
+    
+        
+    var first = document.getElementById("firstCall");
+    if(first.checked == true)
+        text+= "This is the first call to us about the issue.\r\n";
+    else if(first.checked == false)
+        text += "This is NOT the first call to us about this issue.\r\n";
+
+    if(document.getElementById("benefitSurvey").checked == true)
+        text += "Member was offered the healthy benefits reminder survey(Gaps in coverage)\r\n";
+
+
+	text += "Reason: "  + reason  + "\r\nAction: " + action + "\r\nResolution: " + resolution +"\r\nCaller understood and had no further questions";
   
   
 	navigator.clipboard.writeText(text);
