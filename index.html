@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 
@@ -24,9 +25,7 @@
 
     </p>
 
-    <p id = "thirdPartyAuth">
-        <input id="verbalAuthObtained" type="checkbox">
-    </p>
+
     <p>
         <input type="checkbox">
         Has your address, phone number or email changed?
@@ -62,14 +61,38 @@
 	</p>
     <p>
         <label>Call Reason: - today you called us to...</label><br>
-        <textarea id="reason" rows="4" cols="50"> </textarea>
-        <button id="startButton">Start Voice Input</button><br>
+        <div id="reason" contenteditable="true">
+            <span id="finalReasonResult"></span> 
+            <span id="interimReasonResult"></span> 
+        </div>
+        <br>
+
+        <p>
+            <button id="recordReason", data-root="reason", data-finalSpan="finalReasonResult", data-interimSpan="interimReasonResult">Start Voice Input</button><br>
+        </p>
 
         <label>Call Action:</label><br>
-        <textarea id="action" rows="4" cols="50"> </textarea><br>
+        <div id="action" contenteditable="true"> 
+            <span id="finalActionResult"></span> 
+            <span id="interimActionResult"></span> 
+        </div>
+        <br>
+
+        <p>
+            <button id="recordAction", data-root="action", data-finalSpan="finalActionResult", data-interimSpan="interimActionResult">Start Voice Input</button><br>
+        </p> 
 
         <label>Call Resolution: - and I've...</label><br>
-        <textarea id="resolution" rows="4" cols="50"> </textarea><br>
+        <div id="resolution" contenteditable="true">
+            <span id = "finalResolutionResult"></span>
+            <span id = "iterimResolutionResult"></span>
+        </div>
+        
+        <br>
+
+        <p>
+            <button id="recordResolution", data-root="resolution", data-finalSpan="finalResolutionResult", data-interimSpan="iterimResolutionResult">Start Voice Input</button><br>
+        </p>
     </p>
 
     <p>
@@ -87,6 +110,38 @@
 </body>
 </html> 
 
+<style>
+    * 
+    {
+        color: #ffffff;
+        background-color: #1f1d1d;
+    }
+    
+    a{
+        color:lightskyblue;
+    }
+    
+    input[type="text"], textarea, button {
+    
+    background-color : #383838; 
+    
+    }
+    
+    #reason, #action, #resolution
+    {
+        width: 400px;
+        min-height: 100px;
+        border: 2px solid slategray;
+        background-color : #383838; 
+        display:inline-block;
+    }
+    
+    
+    </style>
+
+
+
+<script src="scripts/voiceInput.js"></script>
 
 <script>
     var select = document.getElementById("memberState"); 
@@ -129,29 +184,6 @@
     onRelationshipChanged();
 
 
-
-const startButton = document.getElementById('startButton');
-const outputDiv = document.getElementById('reason');
-
-const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
-recognition.lang = 'en-US';
-
-recognition.onstart = () => {
-    startButton.textContent = 'Listening...';
-};
-
-recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    outputDiv.textContent = transcript;
-};
-
-recognition.onend = () => {
-    startButton.textContent = 'Start Voice Input';
-};
-
-startButton.addEventListener('click', () => {
-    recognition.start();
-});
 
 function getURL(idx)
 {
@@ -309,9 +341,9 @@ function onStateSelected()
 
 function copyRAR()
 {
-	var reason = document.getElementById("reason").value;
-	var action = document.getElementById("action").value;
-	var resolution = document.getElementById("resolution").value;
+	var reason = document.getElementById("reason").textContent;
+	var action = document.getElementById("action").textContent;
+	var resolution = document.getElementById("resolution").textContent;
 	var text = document.getElementById("placeHolder").value;
 	text = "Reason: "  + reason  + "\r\nAction: " + action + "\r\nResolution: " + resolution +"\r\nCaller understood and had no further questions";
   
@@ -340,9 +372,9 @@ function genSummary()
 	
   
   	var idx = select.selectedIndex;
-  	var reason = document.getElementById("reason").value;
-  	var action = document.getElementById("action").value;
-  	var resolution = document.getElementById("resolution").value;
+  	var reason = document.getElementById("reason").textContent;
+  	var action = document.getElementById("action").textContent;
+  	var resolution = document.getElementById("resolution").textContent;
   
 	if(idx == 0)
 		alert("You must select a state!");
@@ -352,7 +384,7 @@ function genSummary()
   
   	if(reason.length == 0)
     	alert("You must insert a call action");
-  	if(resolution == 0)
+  	if(resolution.length == 0)
   		alert("You must insert a call resolution");
   
   	else
@@ -398,20 +430,3 @@ function genSummary()
 }
 </script>
 
-<style>
-* 
-{
-    color: #ffffff;
-    background-color: #1f1d1d;
-}
-
-a{
-    color:lightskyblue;
-}
-
-input[type="text"], textarea, button {
-
-background-color : #383838; 
-
-}
-</style>
