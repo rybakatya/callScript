@@ -13,15 +13,19 @@
         <input id = "callbackNumber" type = "checkbox"/>Callback Number
     </label>
     <p>
-        <label type="text">Caller is a :</label>
+        <label type="text">Caller Type :</label>
         <select id="relationship", onchange="onRelationshipChanged()">
             <option>Member</option>
             <option>Broker</option>
-            <option>Third Party</option>
+            <option>Friend or Family</option>
         </select>
     </p>
     <p id="verificationImageRoot">
-        
+
+    </p>
+
+    <p id = "thirdPartyAuth">
+        <input id="verbalAuthObtained" type="checkbox">
     </p>
     <p>
         <input type="checkbox">
@@ -58,7 +62,8 @@
 	</p>
     <p>
         <label>Call Reason: - today you called us to...</label><br>
-        <textarea id="reason" rows="4" cols="50"> </textarea><br>
+        <textarea id="reason" rows="4" cols="50"> </textarea>
+        <button id="startButton">Start Voice Input</button><br>
 
         <label>Call Action:</label><br>
         <textarea id="action" rows="4" cols="50"> </textarea><br>
@@ -121,7 +126,32 @@
     }
 
     alert('Important, always say yes when asked if you can help with something to avoid failed CMS test calls');
+    onRelationshipChanged();
 
+
+
+const startButton = document.getElementById('startButton');
+const outputDiv = document.getElementById('reason');
+
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+recognition.lang = 'en-US';
+
+recognition.onstart = () => {
+    startButton.textContent = 'Listening...';
+};
+
+recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    outputDiv.textContent = transcript;
+};
+
+recognition.onend = () => {
+    startButton.textContent = 'Start Voice Input';
+};
+
+startButton.addEventListener('click', () => {
+    recognition.start();
+});
 
 function getURL(idx)
 {
@@ -163,7 +193,23 @@ function getURL(idx)
 
 function onRelationshipChanged()
 {
+    var root = document.getElementById("verificationImageRoot");
+    root.replaceChildren();
+    var dropdown = document.getElementById("relationship");
 
+    var link = document.createElement("a");
+    if(dropdown.selectedIndex == 0)//member
+        link.href = "https://raw.githubusercontent.com/rybakatya/callScript/refs/heads/main/images/verification%20flow/member.png";
+
+    if(dropdown.selectedIndex == 1)//broker
+        link.href = "https://raw.githubusercontent.com/rybakatya/callScript/refs/heads/main/images/verification%20flow/broker.png";
+
+    if(dropdown.selectedIndex == 2)//friend or family
+        link.href = "https://raw.githubusercontent.com/rybakatya/callScript/refs/heads/main/images/verification%20flow/third_party.png"
+
+    link.target = "_blank";
+    link.textContent = "View hippa verification call flow for current caller type"  
+    root.appendChild(link);
 }
 
 function createLink()
