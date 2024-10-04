@@ -52,6 +52,11 @@
     </p>
 
     <p>
+        <input id = "benefitPlan" type="checkbox">
+        Does member have an MMP(Medicare-Medicaid Plan)?
+    </p>
+
+    <p>
         <input id="firstCall" type="checkbox">
         Is this your first time calling about this issue?
        
@@ -71,6 +76,22 @@
 
     <p id="medicalRadioBoxes"></p>
 	
+    <p id="ihaRoot">
+        Are you interested in completing a free 45 minute in home assestment with a provider to receive a $100 giftcard?
+        <br>
+        <br>
+        <br>
+        <b>Signify is the preferred vendor for all members, unless otherwise mentioned by the member</b>
+        <table id="ihaInfoTable">
+            <tr>
+              <th>Vendor</th>
+              <th>Phone Number</th>
+              <th>Hoops</th>
+              <th>Website</th>
+            </tr>
+            
+        </table>
+    </p>
 	</p>
     <p>
         <label>Call Reason: - today you called us to...</label><br>
@@ -164,6 +185,57 @@
     var select = document.getElementById("memberState"); 
     document.getElementById("verbalAuthorized").hidden = true;
     document.getElementById("verbalAuthInput").hidden = true;
+    document.getElementById("ihaRoot").hidden = true;
+    document.getElementById("ihaInfoTable").hidden = true;
+    class VendorData    
+    {
+        name;
+        number;
+        website;
+        hoops;
+
+        states;
+
+        constructor(name, number, website, hoops, states)
+        {
+            this.name = name;
+            this.number = number;
+            this.website = website;
+            this.hoops = hoops;
+            this.states = states;
+        }
+
+        getStates()
+        {
+            return this.states;
+        }
+    }
+
+    var ihaInfo = 
+    [
+        new VendorData("Signify Health", "1-855-984-5121", "https://schedule.signifyhealth.com/home", "Mon-Fri 8am-8pm est",
+            [
+                "Alabama", "Arkansas", "California","Delaware", "Connecticut", "Florida", "Georgia", "Hawaii", "Illinois", "Indiana",
+                "Kansas", "Kentucky", "Maine", "Michigan", "Missouri","Nebraska", "New Jersey", "New York", "North Carolina", "Ohio",
+                "Oklahoma", "Oregon", "South Carolina", "Texas", "Washington", "Wisconsin"
+            ]
+        ),
+
+        new VendorData("AdvantMed", "1-800-395-0683", "https://myhealthassessment.com/", "Mon-Sat 11am-5pm est",
+            [
+                "Arkansas", "California", "Florida", "Georgia", "Illinois", "Michigan", "Missouri", "New York", "North Carolina", "Oklahoma",
+                "Ohio", "Oregon", "Pennsylvania", "South Carolina", "Texas", "Washington"
+            ]
+        ),
+
+        new VendorData("Complex Care Solutions", "1-833-457-1973", "www.PersonalHealthVisit.com/schedule", "Mon-Fri 8am-8pm est",
+            [
+                "California", "New Jersey", "New York", "Oregon", "Pennsylvania"
+            ]
+        )
+    ];
+
+
     var options = [
         ["Select a state", "", ""],
         ["Alabama", "Wellcare By Allwell", "https://wellcarecomplete.com/"], 
@@ -293,14 +365,86 @@ function createLink()
     siteRoot.appendChild(link);
 }
 
+function isRestrictedState(state)
+{
+    if(state == "Alabama" || state =="New Mexico")
+        return true;
+    return false;
+}
+
+function checkStateIHA(state)
+{
+    var root = document.getElementById("ihaRoot");
+    var plan = document.getElementById("benefitPlan");
+    var table = document.getElementById("ihaInfoTable");
+    
+    var items = document.querySelectorAll('[id=ihaTR]');
+    if(items != null)
+    {
+
+        items.forEach((item) =>
+        {
+            item.remove();
+        });
+    }
+    if(document.getElementById("benefitPlan").checked == true || isRestrictedState(state) == true)
+    {
+        root.hidden = true;
+        table.hidden = true;
+        return;
+    }
+    root.hidden = false;
+    table.hidden = false;
+    ihaInfo.forEach((vendor) =>
+    {
+        if(vendor.getStates().includes(state) == true)
+        {
+            var tr = document.createElement("tr");
+            tr.id = "ihaTR";
+
+            table.appendChild(tr);
+
+            var td = document.createElement("td");
+            td.textContent = vendor.name;
+
+            tr.appendChild(td);
+
+            td = document.createElement("td");
+            td.textContent = vendor.number;
+            tr.appendChild(td);
+
+            
+
+            td = document.createElement("td");
+            td.textContent = vendor.hoops;
+            tr.appendChild(td);
+
+            
+            td = document.createElement("td");
+            tr.appendChild(td);
+            var link = document.createElement("a");
+            link.href = vendor.website;
+            link.textContent = vendor.name;
+            link.target = "_blank";
+
+            td.appendChild(link);
+            
+
+       
+        }
+    });
+}
 function onStateSelected()
 {
 
     
     
     createLink();
+    
     var state = document.getElementById('memberState').value;
 	var root = document.getElementById('medicalRadioBoxes');
+
+    checkStateIHA(state);
 	root.innerHTML = '';
 	if(state == 'California')
 	{
