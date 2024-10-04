@@ -27,7 +27,7 @@
 
     <p>
         <input id="hippaVerified" type="checkbox">
-        Has hippa been verified for who you're speaking with?
+        Has HIPPA been verified for who you're speaking with?
     </p>
 
     <p id ="verbalAuthInput">
@@ -39,11 +39,6 @@
         <input id="personAuthed", = "text">
     </p>
 
-    <p>
-        <input id="accChanged" type="checkbox">
-        Has your address, phone number or email changed?
-       
-    </p>
 
     <p>
         <input id="verifiedPlanInfo" type="checkbox">
@@ -52,9 +47,14 @@
     </p>
 
     <p>
-        <input id = "benefitPlan" type="checkbox">
-        Does member have an MMP(Medicare-Medicaid Plan)?
+        <input id="accChanged" type="checkbox">
+        Has your address, phone number or email changed?
+       
     </p>
+
+    
+
+
 
     <p>
         <input id="firstCall" type="checkbox">
@@ -64,7 +64,7 @@
 
     <p>
         <input id="benefitSurvey" type="checkbox">
-        Do you have time to complete a quick healthy benefit reminder survey? (Gaps in coverage)
+        Review Gaps in Care - " I have a few healthy reminders here I would like to discuss with you..."
         
     </p>
 
@@ -349,7 +349,7 @@ function onRelationshipChanged()
     if(dropdown.selectedIndex == 0)
         document.getElementById("verbalAuthInput").hidden = true;
     link.target = "_blank";
-    link.textContent = "View hippa verification call flow for current caller type"  
+    link.textContent = "View HIPPA verification call flow for current caller type"  
     root.appendChild(link);
 }
 
@@ -378,7 +378,7 @@ function isRestrictedState(state)
 function checkStateIHA(state)
 {
     var root = document.getElementById("ihaRoot");
-    var plan = document.getElementById("benefitPlan");
+    
     var table = document.getElementById("ihaInfoTable");
     
     var items = document.querySelectorAll('[id=ihaTR]');
@@ -390,7 +390,7 @@ function checkStateIHA(state)
             item.remove();
         });
     }
-    if(document.getElementById("benefitPlan").checked == true || isRestrictedState(state) == true)
+    if(isRestrictedState(state) == true)
     {
         root.hidden = true;
         table.hidden = true;
@@ -528,14 +528,12 @@ function copyRAR()
 	var text = document.getElementById("placeHolder").value;
     text = '';
 
-    if(document.getElementById("memberID").checked == true)
-        text += "MemberID: \r\n";
+   
 
     if(document.getElementById('callerName').checked == true)
         text += "Caller Name: \r\n";
 
-    if(document.getElementById('memberDOB').checked == true)
-        text += "Member DOB: \r\n";
+    text += "Interaction ID: \r\n";
 
     if(document.getElementById('callbackNumber').checked == true)
         text += "Callback Number: \r\n";
@@ -553,7 +551,7 @@ function copyRAR()
         }
     }
     if(document.getElementById('hippaVerified').checked == true)
-        text += "Hippa was verified for member \r\n";
+        text += "HIPPA was verified for member \r\n";
     if(document.getElementById('accChanged').checked == true)
         text += "Asked member if any account information has changed.\r\n";
 
